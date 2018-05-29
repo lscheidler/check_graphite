@@ -30,6 +30,8 @@ import (
   "github.com/lscheidler/check_graphite/graphite"
 )
 
+const Version = "0.1.3"
+
 // flag variables
 var (
   critical float64
@@ -70,7 +72,7 @@ var targetFlag target
 // init parses command line arguments
 func init() {
   flag.Usage = func() {
-    fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
+    fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s (%s):\n", os.Args[0], Version)
     flag.PrintDefaults()
 
     examples := `
