@@ -23,6 +23,7 @@ import (
   "encoding/json"
   "errors"
   "net/http"
+  "path/filepath"
   "strings"
   "time"
 )
@@ -46,6 +47,30 @@ func (target Target) Average() float32 {
     sum += datapoint.value
   }
   return sum / float32(len(target.datapoints))
+}
+
+// Target returns target name
+func (target Target) Target() string {
+  return target.target
+}
+
+// Find finds a target in data map
+func Find(data map[string]Target, targetName string) (Target, bool) {
+  target := Target{}
+  targetOk := false
+
+  // if targetName contains a glob, we need to match the glob with all targets available
+  if strings.Contains(targetName, "*") {
+    for _, targetElem := range data {
+      if matched, _ := filepath.Match(targetName, targetElem.Target()); matched {
+        return targetElem, true
+      }
+    }
+  } else {
+    target, targetOk = data[targetName]
+  }
+
+  return target, targetOk
 }
 
 // GetTargets gets data from graphite web and returns a slice of targets

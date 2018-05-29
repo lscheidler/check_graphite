@@ -155,23 +155,40 @@ func check(nagios *nagios.Nagios, data map[string]graphite.Target) {
 func checkPercentage(nagios *nagios.Nagios, data map[string]graphite.Target) {
   if len(data) % 2 == 0 {
     useTargetName := name == ""
-    for i := 0; i < len(data); i += 2 {
-      if useTargetName {
-        if name = targetFlag[i]; targetNameRegexp != "" {
-          pattern := regexp.MustCompile(targetNameRegexp)
-          if name = targetFlag[i]; pattern.MatchString(targetFlag[i]) {
-            if name = pattern.FindString(targetFlag[i]); len(pattern.FindStringSubmatch(targetFlag[i])) > 1 {
-              matches := pattern.FindStringSubmatch(targetFlag[i])
-              name = strings.Join(matches[1:], ".")
-            }
-          }
-        }
+    for i := 0; i < len(targetFlag); i += 2 {
+      targetValue, targetValueOk := graphite.Find(data, targetFlag[i])
+      if ! targetValueOk {
+        nagios.Unknown("target not found: "+targetFlag[i])
       }
-      nagios.CheckPercentageThreshold(name, float64(data[targetFlag[i]].Average()), float64(data[targetFlag[i+1]].Average()), warning, critical)
+
+      targetMax, targetMaxOk := graphite.Find(data, targetFlag[i+1])
+      if ! targetMaxOk {
+        nagios.Unknown("target not found: "+targetFlag[i+1])
+      }
+
+      if targetValueOk && targetMaxOk {
+        checkPercentagePair(nagios, targetValue, targetMax, useTargetName)
+      }
     }
   } else {
     nagios.Unknown("Count of targets is not even, can not calculate percentage for targets.")
   }
+}
+
+// checkPercentagePair checks the percentage of a pair of graphite targets against thresholds
+func checkPercentagePair(nagios *nagios.Nagios, value graphite.Target, max graphite.Target, useTargetName bool) {
+  if useTargetName {
+    if name = value.Target(); targetNameRegexp != "" {
+      pattern := regexp.MustCompile(targetNameRegexp)
+      if name = value.Target(); pattern.MatchString(value.Target()) {
+        if name = pattern.FindString(value.Target()); len(pattern.FindStringSubmatch(value.Target())) > 1 {
+          matches := pattern.FindStringSubmatch(value.Target())
+          name = strings.Join(matches[1:], ".")
+        }
+      }
+    }
+  }
+  nagios.CheckPercentageThreshold(name, float64(value.Average()), float64(max.Average()), warning, critical)
 }
 
 // checkTargets checks targets against thresholds
