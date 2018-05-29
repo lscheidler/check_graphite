@@ -49,6 +49,11 @@ func (target Target) Average() float32 {
   return sum / float32(len(target.datapoints))
 }
 
+// IsEmpty returns true if datapoints slice is empty
+func (target Target) IsEmpty() bool {
+  return len(target.datapoints) == 0
+}
+
 // Target returns target name
 func (target Target) Target() string {
   return target.target

@@ -33,6 +33,7 @@ import (
 // flag variables
 var (
   critical float64
+  emptyOk bool
   from string
   graphiteUrl string
   name string
@@ -88,6 +89,8 @@ examples:
 
   const (
     criticalUsage               = "set critical threshold"
+    emptyOkUsage                = "empty data from graphite is ok"
+    emptyOkDefaultVal           = false
     fromDefaultVal              = "-2min"
     fromUsage                   = "set from"
     graphiteUrlDefaultVal       = ""
@@ -112,6 +115,7 @@ examples:
 
   flag.Float64Var(&critical,          "critical",             math.NaN(), criticalUsage)
   flag.Float64Var(&critical,          "c",                    math.NaN(), criticalUsage)
+  flag.BoolVar(&emptyOk,              "empty-ok",             emptyOkDefaultVal, emptyOkUsage)
   flag.StringVar(&from,               "from",                 fromDefaultVal, fromUsage)
   flag.StringVar(&from,               "f",                    fromDefaultVal, fromUsage)
   flag.StringVar(&graphiteUrl,        "graphite-url",         graphiteUrlDefaultVal, graphiteUrlUsage)
@@ -157,14 +161,10 @@ func checkPercentage(nagios *nagios.Nagios, data map[string]graphite.Target) {
     useTargetName := name == ""
     for i := 0; i < len(targetFlag); i += 2 {
       targetValue, targetValueOk := graphite.Find(data, targetFlag[i])
-      if ! targetValueOk {
-        nagios.Unknown("target not found: "+targetFlag[i])
-      }
+      targetValueOk = checkTargetValue(nagios, targetValue, targetValueOk, targetFlag[i])
 
       targetMax, targetMaxOk := graphite.Find(data, targetFlag[i+1])
-      if ! targetMaxOk {
-        nagios.Unknown("target not found: "+targetFlag[i+1])
-      }
+      targetMaxOk = checkTargetValue(nagios, targetMax, targetMaxOk, targetFlag[i+1])
 
       if targetValueOk && targetMaxOk {
         checkPercentagePair(nagios, targetValue, targetMax, useTargetName)
@@ -173,6 +173,24 @@ func checkPercentage(nagios *nagios.Nagios, data map[string]graphite.Target) {
   } else {
     nagios.Unknown("Count of targets is not even, can not calculate percentage for targets.")
   }
+}
+
+func checkTargetValue(nagios *nagios.Nagios, target graphite.Target, ok bool, targetName string) bool {
+  result := ok
+  if ! ok {
+    nagios.Unknown("target not found: "+targetName)
+  }
+
+  if target.IsEmpty() {
+    result = false
+
+    if emptyOk {
+      nagios.Ok("target is empty: "+target.Target())
+    } else {
+      nagios.Critical("target is empty: "+target.Target())
+    }
+  }
+  return result
 }
 
 // checkPercentagePair checks the percentage of a pair of graphite targets against thresholds
