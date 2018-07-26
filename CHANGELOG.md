@@ -1,3 +1,7 @@
+# 0.1.4 (UNRELEASED)
+
+- refactored code
+
 # 0.1.3 (2018-05-29)
 
 - added Version constant with plugin version
