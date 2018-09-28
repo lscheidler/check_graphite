@@ -18,49 +18,49 @@ limitations under the License.
 package graphite
 
 import (
-  "encoding/json"
-  "testing"
+	"encoding/json"
+	"testing"
 )
 
-func TestParseJsonData(t *testing.T) {
-  var msg = "[{\"target\": \"test\", \"datapoints\": [[3.5805225, 1526986610], [3.5805225, 1526986611]]}]"
-  var jsonData interface{}
-  unmarshalErr := json.Unmarshal([]byte(msg), &jsonData)
-  if unmarshalErr != nil {
-    t.Error(
-      "Unmarshalling failed for", msg,
-    )
-  }
+func TestParseJSONData(t *testing.T) {
+	var msg = "[{\"target\": \"test\", \"datapoints\": [[3.5805225, 1526986610], [3.5805225, 1526986611]]}]"
+	var jsonData interface{}
+	unmarshalErr := json.Unmarshal([]byte(msg), &jsonData)
+	if unmarshalErr != nil {
+		t.Error(
+			"Unmarshalling failed for", msg,
+		)
+	}
 
-  var targetsData = ParseJsonData(jsonData)
-  if len(targetsData) == 0 {
-    t.Error(
-      "Should not empty", targetsData,
-    )
-  }
+	var targetsData = ParseJSONData(jsonData)
+	if len(targetsData) == 0 {
+		t.Error(
+			"Should not empty", targetsData,
+		)
+	}
 
-  if len(targetsData["test"].datapoints) == 0 {
-    t.Error(
-      "Should not empty", targetsData["test"].datapoints,
-    )
-  }
+	if len(targetsData["test"].datapoints) == 0 {
+		t.Error(
+			"Should not empty", targetsData["test"].datapoints,
+		)
+	}
 }
 
 func TestAverage(t *testing.T) {
-  var msg = "[{\"target\": \"test\", \"datapoints\": [[3.5805225, 1526986610], [3.5805225, 1526986611]]}, {\"target\": \"test2\", \"datapoints\": [[3, 1526986610], [6, 1526986611], [3, 1526986612]]}]"
-  var jsonData interface{}
-  json.Unmarshal([]byte(msg), &jsonData)
-  var targetsData = ParseJsonData(jsonData)
+	var msg = "[{\"target\": \"test\", \"datapoints\": [[3.5805225, 1526986610], [3.5805225, 1526986611]]}, {\"target\": \"test2\", \"datapoints\": [[3, 1526986610], [6, 1526986611], [3, 1526986612]]}]"
+	var jsonData interface{}
+	json.Unmarshal([]byte(msg), &jsonData)
+	var targetsData = ParseJSONData(jsonData)
 
-  if targetsData["test"].Average() != 3.5805225 {
-    t.Error(
-      "Should be average", targetsData["test"].Average(),
-    )
-  }
+	if targetsData["test"].Average() != 3.5805225 {
+		t.Error(
+			"Should be average", targetsData["test"].Average(),
+		)
+	}
 
-  if targetsData["test2"].Average() != 4 {
-    t.Error(
-      "Should be average", targetsData["test2"].Average(),
-    )
-  }
+	if targetsData["test2"].Average() != 4 {
+		t.Error(
+			"Should be average", targetsData["test2"].Average(),
+		)
+	}
 }

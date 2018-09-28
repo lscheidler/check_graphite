@@ -18,13 +18,13 @@ limitations under the License.
 package main
 
 import (
-  "github.com/lscheidler/check_graphite/check"
+	"github.com/lscheidler/check_graphite/check"
 )
 
 const version = "0.1.4"
 
 // main initialize nagios struct and run check
 func main() {
-  checkGraphite := check.Init(version)
-  checkGraphite.Run()
+	checkGraphite := check.Init(version)
+	checkGraphite.Run()
 }

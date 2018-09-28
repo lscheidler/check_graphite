@@ -1,6 +1,8 @@
 # 0.1.4 (UNRELEASED)
 
 - refactored code
+- used go fmt to format code
+- fix golint warnings
 
 # 0.1.3 (2018-05-29)
 
