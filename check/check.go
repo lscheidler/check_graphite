@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Lars Eric Scheidler
+Copyright 2020 Lars Eric Scheidler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import (
 // Check data structure
 type Check struct {
 	Critical         float64
+	Debug            bool
 	EmptyOk          bool
 	Name             string
 	nagios           nagios.Nagios
@@ -71,6 +72,10 @@ func (check *Check) Error(err error) {
 
 // check checks graphite targets against thresholds
 func (check *Check) runCheck(data map[string]graphite.Target) {
+	if check.Debug {
+		fmt.Printf("%v", data)
+	}
+
 	check.nagios.ShowPerfdata = check.Perfdata
 
 	if check.Percentage && math.IsNaN(check.Max) {
@@ -136,6 +141,10 @@ func (check *Check) checkTargets(data map[string]graphite.Target) float64 {
 	var sum float64
 	for _, target := range *check.TargetFlag {
 		if val, ok := data[target]; ok {
+			if check.Debug {
+				fmt.Printf("[%s] %f", target, val)
+			}
+
 			if check.SumFlag {
 				sum += float64(val.Average())
 				check.Name = check.getName(target)

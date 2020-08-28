@@ -1,8 +1,9 @@
-# 0.1.4 (UNRELEASED)
+# 0.1.4 (2020-08-28)
 
 - refactored code
 - used go fmt to format code
 - fix golint warnings
+- added -debug argument
 
 # 0.1.3 (2018-05-29)
 

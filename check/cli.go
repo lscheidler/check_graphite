@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Lars Eric Scheidler
+Copyright 2020 Lars Eric Scheidler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -63,6 +63,8 @@ examples:
 
 	const (
 		criticalUsage              = "set critical threshold"
+		debugUsage                 = "set debug mode"
+		debugDefaultVal            = false
 		emptyOkUsage               = "empty data from graphite is ok"
 		emptyOkDefaultVal          = false
 		fromDefaultVal             = "-2min"
@@ -89,6 +91,7 @@ examples:
 
 	flag.Float64Var(&checkGraphite.Critical, "critical", math.NaN(), criticalUsage)
 	flag.Float64Var(&checkGraphite.Critical, "c", math.NaN(), criticalUsage)
+	flag.BoolVar(&checkGraphite.Debug, "d", debugDefaultVal, debugUsage)
 	flag.BoolVar(&checkGraphite.EmptyOk, "empty-ok", emptyOkDefaultVal, emptyOkUsage)
 	flag.StringVar(&from, "from", fromDefaultVal, fromUsage)
 	flag.StringVar(&from, "f", fromDefaultVal, fromUsage)
