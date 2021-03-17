@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Lars Eric Scheidler
+Copyright 2021 Lars Eric Scheidler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ type Check struct {
 	Debug            bool
 	EmptyOk          bool
 	Name             string
-	nagios           nagios.Nagios
+	nagios           *nagios.Nagios
 	Max              float64
 	Percentage       bool
 	Perfdata         bool
@@ -73,7 +73,7 @@ func (check *Check) Error(err error) {
 // check checks graphite targets against thresholds
 func (check *Check) runCheck(data map[string]graphite.Target) {
 	if check.Debug {
-		fmt.Printf("%v", data)
+		fmt.Printf("%v\n", data)
 	}
 
 	check.nagios.ShowPerfdata = check.Perfdata
@@ -142,7 +142,7 @@ func (check *Check) checkTargets(data map[string]graphite.Target) float64 {
 	for _, target := range *check.TargetFlag {
 		if val, ok := data[target]; ok {
 			if check.Debug {
-				fmt.Printf("[%s] %f", target, val)
+				fmt.Printf("[%s] %v\n", target, val)
 			}
 
 			if check.SumFlag {

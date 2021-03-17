@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Lars Eric Scheidler
+Copyright 2021 Lars Eric Scheidler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ var (
 // Init initializes command line interface
 func Init(version string) *Check {
 	checkGraphite := Check{
-		nagios: nagios.Init(),
+		nagios: nagios.New(),
 	}
 
 	flag.Usage = func() {

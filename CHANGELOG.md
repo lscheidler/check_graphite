@@ -1,3 +1,8 @@
+# 0.1.5 (2021-03-17)
+
+- added go.mod
+- updated go-nagios module
+
 # 0.1.4 (2020-08-28)
 
 - refactored code

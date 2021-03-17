@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Lars Eric Scheidler
+Copyright 2021 Lars Eric Scheidler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import (
 	"github.com/lscheidler/check_graphite/check"
 )
 
-const version = "0.1.4"
+const version = "0.1.5"
 
 // main initialize nagios struct and run check
 func main() {

@@ -1,10 +1,18 @@
 VERSION := $(shell grep "version =" main.go | cut -d '"' -f 2)
 PROGNAME := check_graphite
 
+all: build
+
 fmt:
 	go fmt ./ ./check ./graphite 
 
-build: fmt
+lint:
+	golint $(shell find -name \*.go |xargs dirname|sort -u)
+
+vet:
+	go vet $(shell find -name \*.go |xargs dirname|sort -u)
+
+build: fmt vet
 	GOOS=darwin GOARCH=amd64 go build -o build/darwin_amd64/$(PROGNAME)
 	GOOS=linux GOARCH=amd64 go build -o build/linux_amd64/$(PROGNAME)
 
